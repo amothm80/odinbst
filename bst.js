@@ -35,6 +35,14 @@ class Tree {
     this.root = this.#arrayToBST(finalArray, 0, finalArray.length - 1);
   }
 
+  rebalance(){
+    let arr = []
+    this.inOrder((node)=>{
+      arr.push(node.value)
+    })
+    this.buildTree(arr)
+  }
+
   #findLeaf(value, node) {
     if (value < node.value) {
       if (node.left != null) {
@@ -193,34 +201,64 @@ class Tree {
    return this.#heightBST(node)
 
   }
+
+  #prettyPrintBST(node, prefix = '', isLeft = true) {
+    if (node === null) {
+      return;
+    }
+    if (node.right !== null) {
+      this.#prettyPrintBST(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
+    }
+    console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.value}`);
+    if (node.left !== null) {
+      this.#prettyPrintBST(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+    }
+  }
+
+  prettyPrint(){
+    this.#prettyPrintBST(this.root)
+  }
+
+  #isBalancedBST(node){
+    let isbalanced = true;
+    if (node.left != null){
+      isbalanced= this.#isBalancedBST(node.left)
+    }
+    if (node.right != null){
+      isbalanced= this.#isBalancedBST(node.right)
+    }
+    const leftHeight = this.#heightBST(node.left)
+    const rightHeight = this.#heightBST(node.right)
+    if (Math.abs(leftHeight - rightHeight) > 1){
+      return false;
+    }else{
+      return isbalanced;
+    }
+  }
+
+  isBalanced(){
+    return this.#isBalancedBST(this.root)
+  }
 }
-const prettyPrint = (node, prefix = '', isLeft = true) => {
-  if (node === null) {
-    return;
-  }
-  if (node.right !== null) {
-    prettyPrint(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
-  }
-  console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.value}`);
-  if (node.left !== null) {
-    prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
-  }
-};
 
 
 
 bst = new Tree();
-// bst.insertValue(2)
+
 // bst.insertValue(1)
 // bst.insertValue(4)
 // bst.insertValue(3)
-bst.buildTree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
-prettyPrint(bst.root);
+bst.buildTree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 634, 324]);
+bst.insertValue(645)
+bst.insertValue(647)
+bst.prettyPrint()
 // bst.levelOrder((node)=>{
 //   console.log(node)
 // })
 // bst.inOrder((node)=>{console.log(node)})
-console.log(bst.height(bst.find(8)))
+// console.log(bst.height(bst.find(8)))
+console.log(bst.isBalanced())
+bst.rebalance()
+bst.prettyPrint()
 // bst.deleteValue(8);
-// prettyPrint(bst.root);
 // console.log()
